@@ -49,7 +49,7 @@ Enemy.prototype.update = function(dt) {
     if (this.x > 500) {
         this.x = -80;
 
-         min = Math.ceil(200);
+         min = Math.ceil(400);
          max = Math.floor(50);
             this.speed = Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -79,8 +79,8 @@ Player.prototype.update = function(dt) {
 Player.prototype.win = function() {
 
         swal({
-            title: "You won!",
-            icon: "warning"
+            title: "You made it!",
+            icon: "success"
         });
 
         this.x = 200;
@@ -147,10 +147,10 @@ var player = new Player(200, 400);
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [nemesis1, nemesis2, nemesis3, nemesis4];
 
-nemesis1.update(1); 
-nemesis2.update(1); 
-nemesis3.update(1); 
-nemesis4.update(1);
+nemesis1.update(1.4); 
+nemesis2.update(1.4); 
+nemesis3.update(1.4); 
+nemesis4.update(1.4);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -166,7 +166,6 @@ document.addEventListener('keyup', function(e) {
 });
 
 $(document).ready(function() {
-    $('canvas').before('<div class="Lives">Lives: </div>');
     $('canvas').wrap('<div class="reaction animated slideInDown"></div>');
     setTimeout (function() {
         $('.reaction').removeClass('animated slideInDown');
