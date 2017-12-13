@@ -1,7 +1,10 @@
-//Use sci fi images: http://www.fps-x-games.com/2012/03/sci-fi-textures.html
 var score = 0;
 
-
+/*
+ * Adds a reaction each time a collision occurs
+ *   - Adds a brief animation to the board and then removes the classes that cause it
+ *   - Uses the nimate.css library
+ */
 function collisionReaction() {
     $('.reaction').addClass('animated flash');
     setTimeout (function() {
@@ -9,23 +12,28 @@ function collisionReaction() {
         }, 500);
 }
 
+/*
+ * Detects collisions between the enemies and the player
+ *   - Resets the player to the starting position if there is a collision
+ *   - Axis-aligned collision detection model from Mozilla: 
+ *   - https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+ */
 function collisionDetector(enemy, hero) {
-// Axis-aligned collision detection model from Mozilla: https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
     if (enemy.x < hero.x + hero.width &&
     enemy.x + enemy.width > hero.x &&
     enemy.y < hero.y + hero.height &&
     enemy.height + enemy.y > hero.y) {
-    // collision detected!
         collisionReaction();
         hero.x = 200;
         hero.y = 400;
     }
 }
 
-// Enemies our player must avoid
+/*
+ * Constructor for enemy objects
+ *   - Sets x & y canvas coordiantes, width and height for collision detection, and randomized speed.
+ */
 function Enemy(x, y) {
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     this.x = x;
     this.y = y;
@@ -40,11 +48,7 @@ function Enemy(x, y) {
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-
     this.x += (this.speed * dt);
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
 
     if (this.x > 500) {
         this.x = -80;
@@ -73,11 +77,15 @@ function Player(x, y) {
     this.height = 30;
 }
 
+// Required class fo rthe engine
 Player.prototype.update = function(dt) {
 };
 
+/*
+ * Action when the player wins (reaches the 'water' row)
+ *   - Increments the score value, resets player position, displays alert & score
+ */
 Player.prototype.win = function() {
-
         swal({
             title: "You made it!",
             icon: "success"
@@ -95,6 +103,9 @@ Player.prototype.win = function() {
         }
 };
 
+/*
+ * Determines distance player moves based on key inputs
+ */
 Player.prototype.handleInput = function(key) {
     switch (key) {
         case 'left':
@@ -112,7 +123,6 @@ Player.prototype.handleInput = function(key) {
             }
             break;
         case 'up':
-            console.log(this.y);
             if (this.y === -20) {
                 break;
             } else if (this.y === 64) {
@@ -131,11 +141,12 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
+// Required function for the engine, displays payer
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Instantiate objects.
+// Instantiates enemy objects
 var nemesis1 = new Enemy(0, 57);
 var nemesis2 = new Enemy(0, 140);
 var nemesis3 = new Enemy(0, 222);
