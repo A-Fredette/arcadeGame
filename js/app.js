@@ -1,5 +1,3 @@
-var score = 0;
-
 /*
  * Adds a reaction each time a collision occurs
  *   - Adds a brief animation to the board and then removes the classes that cause it
@@ -10,23 +8,6 @@ function collisionReaction() {
     setTimeout (function() {
         $('.reaction').removeClass('animated flash');
         }, 500);
-}
-
-/*
- * Detects collisions between the enemies and the player
- *   - Resets the player to the starting position if there is a collision
- *   - Axis-aligned collision detection model from Mozilla: 
- *   - https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
- */
-function collisionDetector(enemy, hero) {
-    if (enemy.x < hero.x + hero.width &&
-    enemy.x + enemy.width > hero.x &&
-    enemy.y < hero.y + hero.height &&
-    enemy.height + enemy.y > hero.y) {
-        collisionReaction();
-        hero.x = 200;
-        hero.y = 400;
-    }
 }
 
 /*
@@ -45,6 +26,23 @@ function Enemy(x, y) {
     this.speed = Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+/*
+ * Detects collisions between the enemies and the player
+ *   - Resets the player to the starting position if there is a collision
+ *   - Axis-aligned collision detection model from Mozilla: 
+ *   - https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+ */
+Enemy.prototype.collisionDetection = function(hero) {
+    if (this.x < hero.x + hero.width &&
+    this.x + this.width > hero.x &&
+    this.y < hero.y + hero.height &&
+    this.height + this.y > hero.y) {
+        collisionReaction();
+        hero.x = 200;
+        hero.y = 400;
+    }
+};
+
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
@@ -58,13 +56,15 @@ Enemy.prototype.update = function(dt) {
             this.speed = Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    collisionDetector(this, player);
+    this.collisionDetection(player);
 };
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
+
+
 
 // Now write your own player class
 // This class requires an update(), render() and
@@ -75,6 +75,7 @@ function Player(x, y) {
     this.y = y;
     this.width = 61;
     this.height = 30;
+    this.score = 0;
 }
 
 // Required class fo rthe engine
@@ -94,12 +95,12 @@ Player.prototype.win = function() {
         this.x = 200;
         this. y = 400;
 
-        if (score === 0 ) {
-            score ++;
-            $('canvas').before('<div class= "score-counter">Score: '+score+' </div>');
+        if (this.score === 0 ) {
+            this.score ++;
+            $('canvas').before('<div class= "score-counter">Score: '+this.score+' </div>');
         } else {
-            score ++;
-            $('.score-counter').html("Score: "+score);
+            this.score ++;
+            $('.score-counter').html("Score: "+this.score);
         }
 };
 
@@ -147,26 +148,22 @@ Player.prototype.render = function() {
 };
 
 // Instantiates enemy objects
-var nemesis1 = new Enemy(0, 57);
-var nemesis2 = new Enemy(0, 140);
-var nemesis3 = new Enemy(0, 222);
-var nemesis4 = new Enemy(0, 305);
+const nemesis1 = new Enemy(0, 57);
+const nemesis2 = new Enemy(0, 140);
+const nemesis3 = new Enemy(0, 222);
+const nemesis4 = new Enemy(0, 305);
 
 // Place the player object in a variable called player
-var player = new Player(200, 400);
+const player = new Player(200, 400);
 
 // Place all enemy objects in an array called allEnemies
-var allEnemies = [nemesis1, nemesis2, nemesis3, nemesis4];
+const allEnemies = [nemesis1, nemesis2, nemesis3, nemesis4];
 
-nemesis1.update(1.4); 
-nemesis2.update(1.4); 
-nemesis3.update(1.4); 
-nemesis4.update(1.4);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
-    var allowedKeys = {
+    const allowedKeys = {
         37: 'left',
         38: 'up',
         39: 'right',
